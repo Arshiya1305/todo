@@ -8,11 +8,12 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# Create table
+# Create table if it doesn't exist
 conn = get_db_connection()
 conn.execute('CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, task TEXT)')
 conn.commit()
 conn.close()
+
 
 @app.route('/')
 def index():
@@ -20,6 +21,7 @@ def index():
     tasks = conn.execute('SELECT * FROM tasks').fetchall()
     conn.close()
     return render_template('index.html', tasks=tasks)
+
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -30,6 +32,7 @@ def add():
     conn.close()
     return redirect('/')
 
+
 @app.route('/delete/<int:id>')
 def delete(id):
     conn = get_db_connection()
@@ -38,5 +41,6 @@ def delete(id):
     conn.close()
     return redirect('/')
 
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
